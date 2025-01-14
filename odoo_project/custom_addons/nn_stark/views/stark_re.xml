@@ -1,0 +1,620 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_crm_stark_form" model="ir.ui.view">
+        <field name="name">crm.lead.form</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='name']" position="before">
+                <group>
+                    <field name="seq"/>
+                </group>
+            </xpath>
+
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="page_info_projet" invisible="1"/>
+                <field name="page_predimension" invisible="1"/>
+                <field name="page_visite_site" invisible="1"/>
+                <field name="page_chiffrage" invisible="1"/>
+                <field name="page_instructions" invisible="1"/>
+            </xpath>
+
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="string">CRM Manager</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='tag_ids']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='team_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="apporteur_affaire" options="{'no_create': True, 'no_create_edit':True}"/>
+                <field name="conseille" options="{'no_create': True, 'no_create_edit':True}"/>
+            </xpath>
+
+
+            <!--            Changement de stage-->
+
+            <xpath expr="//button[@name='action_set_won_rainbowman']" position="before">
+                <button name="assign_new_sequence" string="Créer Référence Stark" type="object"/>
+                <button string="Séquence Précédente" type="object"
+                        name="change_stage_with_before_ordre_id" class="oe_highlight"/>
+                <button string="Séquence suivante" type="object"
+                        name="change_stage_with_next_ordre_id" class="oe_highlight"/>
+            </xpath>
+
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="ordre_id" invisible="1"/>
+                <field name="before_ordre_id" invisible="1"/>
+                <field name="next_ordre_id" invisible="1"/>
+            </xpath>
+
+            <xpath expr="//field[@name='stage_id']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+
+            <xpath expr="//notebook/page[@name='lead']" position="after">
+                <page string="Historique de l'Opportunité">
+                    <field name="stage_change_history_ids" readonly="1">
+                        <tree>
+                            <field name="ordre_id"/>
+                            <field name="stage_id"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="duree"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+
+            <!--            fin changement stage-->
+
+            <xpath expr="//page[@name='lead']" position="after">
+                <page string="Info Projet" modifiers="{'invisible': 'page_info_projet = False'}">
+                    <group col="2">
+                        <group name="data_client" string="Données Clients">
+                            <field name="type_installation" options="{'no_create': True, 'no_create_edit':True}"/>
+                            <field name="district_steg" options="{'no_create': True, 'no_create_edit':True}"/>
+                            <field name="ref_steg"/>
+                            <field name="type_compteur"/>
+                            <field name="calibre_disjoncteur_existant"
+                                   options="{'no_create': True, 'no_create_edit':True}"/>
+                            <field name="puissance_disj_existant" invisible="1"/>
+                            <field name="calibre_disjoncteur_steg"
+                                   options="{'no_create': True, 'no_create_edit':True}"/>
+                            <field name="puissance_disj_steg" invisible="1"/>
+                            <field name="state_calibre" widget="badge"
+                                   decoration-success="state_calibre == 'ras'"
+                                   decoration-danger="state_calibre == 'danger'"/>
+                            <field name="puissance_souscrite"/>
+                            <field name="consommation_annuelle"/>
+                            <field name="courbe_charge_stark"
+                                   invisible="type_installation != 'mt'"/>
+                            <field name="facture_steg"
+                                   invisible="type_installation != 'mt'"
+                            />
+
+                        </group>
+
+                        <group name="module_pv" string="Modules PV">
+                            <field name="module_pv" options="{'no_create': True, 'no_create_edit':True}"/>
+                            <field name="marque_module"/>
+                            <field name="puissance_module"/>
+                            <field name="nombre_module"/>
+                            <field name="puissance_total"/>
+                        </group>
+                    </group>
+                    <group name="onduleur_pv" string="Onduleur PV" col="2">
+                        <group>
+                            <field name="onduleur_pv_1" options="{'no_create': True, 'no_create_edit':True}"/>
+                            <field name="marque_onduleur_1"/>
+                            <field name="puissance_onduleur_1"/>
+                            <field name="courant_sortie_1"/>
+                            <field name="nombre_onduleur_1"/>
+
+                        </group>
+                        <group>
+                            <field name="onduleur_pv_2" options="{'no_create': True, 'no_create_edit':True}"/>
+                            <field name="marque_onduleur_2"/>
+                            <field name="puissance_onduleur_2"/>
+                            <field name="courant_sortie_2"/>
+                            <field name="nombre_onduleur_2"/>
+
+                        </group>
+                        <group>
+                            <field name="puissance_total_ac"/>
+                        </group>
+                        <group>
+                            <field name="courant_sortie_total"/>
+                        </group>
+                        <group>
+                            <field name="state_onduleur" widget="badge"
+                                   decoration-success="state_onduleur == 'ras'"
+                                   decoration-danger="state_onduleur == 'danger'"/>
+                        </group>
+
+
+                    </group>
+                    <group>
+                        <field name="note_info"/>
+                    </group>
+                </page>
+
+                <page string="Prédimensionnement"
+                                             modifiers="{'invisible': 'page_predimension = False'}">
+                    <group col="2">
+                        <group>
+                            <field name="charge_etude" options="{'no_create': True, 'no_create_edit':True}"/>
+                            <field name="deadline"/>
+                            <field name="statut_predimension"/>
+                        </group>
+                    </group>
+                </page>
+
+                <page string="Visite de Site"
+                       modifiers="{'invisible': 'page_visite_site = False'}"
+                >
+                    <group col="2">
+                        <group>
+                            <field name="coordinateur" options="{'no_create': True, 'no_create_edit':True}"/>
+                            <field name="date_visite"/>
+                            <field name="statut_visite_site"/>
+                        </group>
+                    </group>
+                </page>
+
+                <page string="Chiffrage"                        modifiers="{'invisible': 'page_chiffrage = False'}"
+  >
+                    <group col="2">
+                        <group>
+                            <field name="charge_chiffrage" options="{'no_create': True, 'no_create_edit':True}"/>
+                            <field name="deadline_chiffrage"/>
+                            <field name="statut_chiffrage"/>
+                        </group>
+                    </group>
+                </page>
+
+                <page string="Instructions"   modifiers="{'invisible': 'page_instructions = False'}"
+                >
+                    <group col="2">
+                        <group>
+                            <field name="date_depot"/>
+                            <field name="statut_depot"/>
+                            <field name="credit_prosol"/>
+                        </group>
+                    </group>
+                    <group col="2">
+                        <group>
+                            <field name="date_approbation"/>
+                            <field name="date_depot_dr"/>
+                            <field name="date_reception_steg"/>
+                        </group>
+                        <field name="note_instructions"/>
+                    </group>
+                </page>
+
+            </xpath>
+
+        </field>
+    </record>
+
+
+    <!-- Interface Commercial -->
+
+    <record id="crm_commercial_tree_view" model="ir.ui.view">
+        <field name="name">crm.commercial.tree</field>
+        <field name="model">crm.commercial</field>
+        <field name="priority">2</field>
+        <field name="arch" type="xml">
+            <tree string="Commercial" multi_edit="1" sample="1">
+                <field name="name"/>
+                <field name="telephone"/>
+                <field name="mail"/>
+                <field name="apporteur_affaire_user"/>
+                <field name="conseille_user"/>
+                <field name="coordinateur_technique_user"/>
+                <field name="charge_etude_user"/>
+                <field name="installateur_user"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="crm_commercial_form_view" model="ir.ui.view">
+        <field name="name">crm.commercial.form</field>
+        <field name="model">crm.commercial</field>
+        <field name="arch" type="xml">
+            <form string="Commercial">
+                <group>
+                    <field name="name"/>
+                    <field name="telephone"/>
+                    <field name="mail"/>
+                    <field name="apporteur_affaire_user"/>
+                    <field name="conseille_user"/>
+                    <field name="coordinateur_technique_user"/>
+                    <field name="charge_etude_user"/>
+                    <field name="installateur_user"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="commercial_action" model="ir.actions.act_window">
+        <field name="name">Commercial</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">crm.commercial</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="crm_commercial_tree_view"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer !
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_crm_commercial"
+              name="Equipe Commercial"
+              action="commercial_action"
+              parent="crm.crm_menu_config"
+              groups="sales_team.group_sale_manager"
+              sequence="30"/>
+
+    <record id="crm_commercial_filter_view" model="ir.ui.view">
+        <field name="name">crm.commercial.filter</field>
+        <field name="model">crm.commercial</field>
+        <field name="priority" eval="15"/>
+        <field name="arch" type="xml">
+            <search string="Recherche Commercial">
+                <field name="name" string="Nom"/>
+                <filter name="apporteur_affaire_user" string="Apporteur d’affaire"
+                        domain="[('apporteur_affaire_user', '=', True)]"/>
+                <filter name="conseille_user" string="Conseiller" domain="[('conseille_user', '=', True)]"/>
+                <filter name="coordinateur_technique_user" string="Coordinateur technique"
+                        domain="[('coordinateur_technique_user', '=', True)]"/>
+                <filter name="charge_etude_user" string="Chargé d’étude" domain="[('charge_etude_user', '=', True)]"/>
+                <filter name="installateur_user" string="Installateur" domain="[('installateur_user', '=', True)]"/>
+
+            </search>
+        </field>
+    </record>
+
+    <!-- Interface District STEG -->
+
+    <record id="district_steg_tree_view" model="ir.ui.view">
+        <field name="name">district.steg.tree</field>
+        <field name="model">district.steg</field>
+        <field name="priority">2</field>
+        <field name="arch" type="xml">
+            <tree string="District STEG" multi_edit="1" sample="1">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="district_steg_form_view" model="ir.ui.view">
+        <field name="name">district.steg.form</field>
+        <field name="model">district.steg</field>
+        <field name="arch" type="xml">
+            <form string="District STEG">
+                <group>
+                    <field name="name"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="district_steg_action" model="ir.actions.act_window">
+        <field name="name">District STEG</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">district.steg</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="district_steg_tree_view"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer District STEG !
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_district_steg"
+              name="District STEG"
+              action="district_steg_action"
+              parent="crm.crm_menu_config"
+              groups="sales_team.group_sale_manager"
+              sequence="40"/>
+
+    <!-- Interface Calibre Disjoncteur -->
+
+    <record id="calibre_disjoncteur_tree_view" model="ir.ui.view">
+        <field name="name">calibre.disjoncteur.tree</field>
+        <field name="model">calibre.disjoncteur</field>
+        <field name="priority">2</field>
+        <field name="arch" type="xml">
+            <tree string="Calibre Disjoncteur" multi_edit="1" sample="1">
+                <field name="name"/>
+                <field name="puissance"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="calibre_disjoncteur_form_view" model="ir.ui.view">
+        <field name="name">calibre.disjoncteur.form</field>
+        <field name="model">calibre.disjoncteur</field>
+        <field name="arch" type="xml">
+            <form string="Calibre Disjoncteur">
+                <group>
+                    <field name="name"/>
+                    <field name="puissance"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="calibre_disjoncteur_action" model="ir.actions.act_window">
+        <field name="name">Calibre Disjoncteur</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">calibre.disjoncteur</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="calibre_disjoncteur_tree_view"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer Calibre Disjoncteur !
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_calibre_disjoncteur"
+              name="Calibre Disjoncteur"
+              action="calibre_disjoncteur_action"
+              parent="crm.crm_menu_config"
+              groups="sales_team.group_sale_manager"
+              sequence="45"/>
+
+    <!-- Interface Module PV -->
+
+    <record id="module_pv_tree_view" model="ir.ui.view">
+        <field name="name">module.pv.tree</field>
+        <field name="model">module.pv</field>
+        <field name="priority">2</field>
+        <field name="arch" type="xml">
+            <tree string="Module PV" multi_edit="1" sample="1">
+                <field name="name"/>
+                <field name="marque"/>
+                <field name="puissance"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="module_pv_form_view" model="ir.ui.view">
+        <field name="name">module.pv.form</field>
+        <field name="model">module.pv</field>
+        <field name="arch" type="xml">
+            <form string="Module PV">
+                <group>
+                    <field name="name"/>
+                    <field name="marque"/>
+                    <field name="puissance"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="module_pv_action" model="ir.actions.act_window">
+        <field name="name">Module PV</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">module.pv</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="module_pv_tree_view"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer Module PV !
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_module_pv"
+              name="Module PV"
+              action="module_pv_action"
+              parent="crm.crm_menu_config"
+              groups="sales_team.group_sale_manager"
+              sequence="50"/>
+
+    <!-- Interface Onduleur -->
+
+    <record id="onduleur_pv_tree_view" model="ir.ui.view">
+        <field name="name">onduleur.pv.tree</field>
+        <field name="model">onduleur.pv</field>
+        <field name="priority">2</field>
+        <field name="arch" type="xml">
+            <tree string="Onduleur PV" multi_edit="1" sample="1">
+                <field name="name"/>
+                <field name="marque"/>
+                <field name="puissance"/>
+                <field name="courant_sortie"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="onduleur_pv_form_view" model="ir.ui.view">
+        <field name="name">onduleur.pv.form</field>
+        <field name="model">onduleur.pv</field>
+        <field name="arch" type="xml">
+            <form string="Onduleur PV">
+                <group>
+                    <field name="name"/>
+                    <field name="marque"/>
+                    <field name="puissance"/>
+                    <field name="courant_sortie"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="onduleur_pv_action" model="ir.actions.act_window">
+        <field name="name">Onduleur PV</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">onduleur.pv</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="onduleur_pv_tree_view"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer Onduleur PV !
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_onduleur_pv"
+              name="Onduleur PV"
+              action="onduleur_pv_action"
+              parent="crm.crm_menu_config"
+              groups="sales_team.group_sale_manager"
+              sequence="50"/>
+
+    <record id="crm_stage_tree_inherit_stage_order" model="ir.ui.view">
+        <field name="name">crm.stage.tree.inherit.satge.order</field>
+        <field name="model">crm.stage</field>
+        <field name="inherit_id" ref="crm.crm_stage_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="before">
+                <field name="ordre"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="crm_stage_sequence" model="ir.ui.view">
+        <field name="name">crm.stage.sequence</field>
+        <field name="model">crm.stage</field>
+        <field name="inherit_id" ref="crm.crm_stage_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='fold']" position="after">
+                <field name="ordre"/>
+            </xpath>
+            <xpath expr="//field[@name='requirements']" position="after">
+                <group string="Affichage des Pages">
+                    <field name="page_info_projet"/>
+                    <field name="page_predimension"/>
+                    <field name="page_visite_site"/>
+                    <field name="page_chiffrage"/>
+                    <field name="page_instructions"/>
+                </group>
+            </xpath>
+
+
+        </field>
+    </record>
+
+    <record id="view_crm_case_kanban_inherit_readonly" model="ir.ui.view">
+        <field name="name">crm.lead.kanban.inherit.readonly</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='stage_id']" position="attributes">
+                <attribute name="readonly">True</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="seq"/>
+            </xpath>
+
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="options">{'no_create': True, 'no_create_edit':True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='tag_ids']" position="before">
+                <field name="type_installation"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="view_crm_quick_kanban_inherit_readonly" model="ir.ui.view">
+        <field name="name">crm.lead.kanban.quick.inherit.readonly</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.quick_create_opportunity_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="options">{'no_create': True, 'no_create_edit':True}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_crm_liste_stark_re" model="ir.ui.view">
+        <field name="name">crm.lead.liste.stark.re</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='email_from']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='contact_name']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='team_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='activity_ids']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+<!--            <xpath expr="//field[@name='activity_date_deadline_my']" position="attributes">-->
+<!--                <attribute name="invisible">1</attribute>-->
+<!--            </xpath>-->
+
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="seq"/>
+            </xpath>
+
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="phone" position="move" optional="show"/>
+                <field name="apporteur_affaire" optional="show"/>
+                <field name="conseille"/>
+                <field name="stage_id" position="move" optional="show"/>
+                <field name="type_installation" optional="show"/>
+                <field name="district_steg" optional="show"/>
+                <field name="ref_steg" optional="show"/>
+
+                <field name="puissance_total" optional="show" sum="Total"/>
+                <field name="module_pv" optional="show"/>
+                <field name="puissance_module" optional="show"/>
+                <field name="nombre_module" optional="show"/>
+            </xpath>
+
+            <xpath expr="//field[@name='expected_revenue']" position="after">
+                <field name="credit_prosol" optional="show"/>
+                <field name="coordinateur" optional="show"/>
+                <field name="date_visite" optional="show"/>
+                <field name="statut_visite_site" optional="show"/>
+                <field name="date_depot" optional="show"/>
+                <field name="statut_depot" optional="show"/>
+                <field name="date_approbation" optional="show"/>
+                <field name="date_depot_dr" optional="show"/>
+                <field name="date_reception_steg" optional="show"/>
+            </xpath>
+
+
+        </field>
+    </record>
+
+
+    <!-- Sequences CRM -->
+    <record id="seq_crm" model="ir.sequence">
+        <field name="name">CRM Stark</field>
+        <field name="code">crm.seq</field>
+        <field name="prefix">TNSE - %(y)s -</field>
+        <field name="padding">3</field>
+        <field name="company_id" eval="False"/>
+        <field name="use_date_range" eval="True"/>
+    </record>
+
+</odoo>
