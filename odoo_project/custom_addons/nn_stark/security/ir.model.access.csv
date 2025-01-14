@@ -1,1 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_crm_commercial,access.crm.commercial,model_crm_commercial,sales_team.group_sale_manager,1,1,1,1
+access_district_steg,access.district.steg,model_district_steg,sales_team.group_sale_manager,1,1,1,1
+access_calibre_disjoncteur,access.calibre.disjoncteur,model_calibre_disjoncteur,sales_team.group_sale_manager,1,1,1,1
+access_module_pv,access.module.pv,model_module_pv,sales_team.group_sale_manager,1,1,1,1
+access_onduleur_pv,access.onduleur.pv,model_onduleur_pv,sales_team.group_sale_manager,1,1,1,1
+access_crm_stage_change_history_manager,Access Crm Stage Change History Manager,model_crm_stage_change_history,base.group_user,1,1,1,1
